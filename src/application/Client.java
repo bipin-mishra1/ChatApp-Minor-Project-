@@ -10,7 +10,10 @@ import java.net.*;
 import java.text.SimpleDateFormat;
 import java.io.*;
 import javax.swing.border.*;
+import javax.swing.plaf.ScrollBarUI;
+import javax.swing.plaf.basic.BasicScrollBarUI;
 import java.util.Calendar;
+
 /**
  * @author bipin
  *
@@ -105,14 +108,43 @@ public class Client implements ActionListener {
 	   l7.setBounds(420,22,13,25);
 	   p1.add(l7);
 	   
+	   //this is main panel
 	   a1 = new JPanel();
-	   a1.setBounds(5,73,440,538);
-	   //a1.setBackground(Color.blue);
+	   //a1.setBounds(5,73,440,538);
 	   a1.setFont(new Font("SAN_SERIF",Font.PLAIN,16));
-//	   a1.setLineWrap(true);
-//	   a1.setWrapStyleWord(true);
-//	   a1.setEditable(false);
-	   f1.add(a1);
+	   //f1.add(a1);
+	   
+	   //to add scrollbar in a1
+	   JScrollPane sp = new JScrollPane(a1);
+	   sp.setBounds(5,73,440,538);
+	   //to add empty border 
+	   sp.setBorder(BorderFactory.createEmptyBorder());
+	   sp.getVerticalScrollBar().setBackground(Color.GREEN);
+	   
+	   
+	   //using plaf : pluggable look and feel! ScrollBarUI's subclass is BasicScrollBarUI
+	   ScrollBarUI ui = new BasicScrollBarUI() {
+		   //decrease Button is protected so it should be either public or protected but not default
+		   
+		    protected JButton createDecreaseButton(int orientation) {
+		    	JButton button = super.createDecreaseButton(orientation);
+		    	button.setBackground(new Color(7,94,84));
+		    	button.setForeground(Color.white);
+		    	this.thumbColor = new Color(7,94,84);
+		    	return button;
+		    }
+		    
+		    protected JButton createIncreaseButton(int orientation) {
+		    	JButton button = super.createIncreaseButton(orientation);
+		    	button.setBackground(new Color(7,94,84));
+		    	button.setForeground(Color.white);
+		    	this.thumbColor = new Color(7,94,84);
+		    	return button;
+		    }
+	   };
+	   
+	   sp.getVerticalScrollBar().setUI(ui);
+	   f1.add(sp);
 	   
 	   b1 = new JButton("send");
 	   b1.addActionListener(this);
@@ -202,7 +234,7 @@ public class Client implements ActionListener {
    public void actionPerformed(ActionEvent arg0) {
 	      try {
 	       String out = t.getText();
-	       
+	       sendTextToFile(out);
 	       JPanel p2 =  formatLabel(out);
 	       
 	       //p2.setLayout(new BorderLayout());
@@ -249,5 +281,31 @@ public class Client implements ActionListener {
 	                   
 	           return p3;
 	    }
+	
+	public void sendTextToFile(String out) {
+	     FileWriter f = null;
+	     try {
+	    	 f = new FileWriter("chat.txt");
+	    	 PrintWriter p = new PrintWriter(new BufferedWriter(f));
+	    	 p.println("Client : "+out);//it will append message in file in new line.
+	    	 
+	    }catch(FileNotFoundException e){
+          
+	    	System.out.println(e.toString());
+	    
+	    }catch(Exception e) {
+	    	System.out.println(e.toString());
+	    }finally {
+	       if(f!=null){
+	    	 try {
+	           f.close();
+	    	 }catch(IOException e) {
+	    		System.out.println(e);
+	    	 }
+	       }else {
+	        System.out.println("File Not Opened!");
+	       }
+	    }
+}
 
 }
