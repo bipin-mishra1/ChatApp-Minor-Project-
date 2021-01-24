@@ -191,7 +191,7 @@ public class Client implements ActionListener {
    // Returns an ImageIcon, or null if the path was invalid. 
    private static ImageIcon createImageIcon(String path,
       String description) {
-      java.net.URL imgURL = Server.class.getResource(path);
+      java.net.URL imgURL = Client.class.getResource(path);
       
       if (imgURL != null) {
          return new ImageIcon(imgURL, description);
